@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class Deck {
+    public static final Card ACE = new Card("x", "A");
+
     private final List<Card> cards = new ArrayList<>();
 
     public Deck() {
