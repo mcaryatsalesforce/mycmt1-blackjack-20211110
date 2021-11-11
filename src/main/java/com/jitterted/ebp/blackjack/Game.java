@@ -87,8 +87,10 @@ public class Game {
 
     public void play() { // long method (many many _many_ decisions)
         // get Player's decision: hit until they stand, then they're done (or they go bust)
-        playerDraws();
-        dealerDraws();
+        if (!dealerHand.blackjack()) {
+            playerDraws();
+            dealerDraws();
+        }
         displayFinalGameState();
         displayGameResult();
     }
@@ -199,9 +201,18 @@ public class Game {
     private void displayGameResult() {
         if (playerHand.busted()) {
             System.out.println("You Busted, so you lose.  💸");
+            return;
         } else if (dealerHand.busted()) {
             System.out.println("Dealer went BUST, Player wins! Yay for you!! 💵");
-        } else if (dealerHand.totalValue() < playerHand.totalValue()) {
+            return;
+        }
+        if (playerHand.blackjack()) {
+            System.out.println("You hit Blackjack!");
+        }
+        if (dealerHand.blackjack()) {
+            System.out.println("Dealer hit Blackjack!");
+        }
+        if (dealerHand.totalValue() < playerHand.totalValue()) {
             System.out.println("You beat the Dealer! 💵");
         } else if (dealerHand.totalValue() == playerHand.totalValue()) {
             System.out.println("Push: You tie with the Dealer. 💸");
