@@ -42,18 +42,16 @@ public class WalletBettingTest {
 
     @Test
     public void creditAndBetPositiveReportsReducedAmountInBalance() {
-        Wallet wallet = new Wallet();
-        wallet.credit(10)
-              .bet(3);
+        Wallet wallet = new Wallet().credit(10);
+        wallet.bet(3);
         assertThat(wallet.balance()).isNotZero();
         assertThat(wallet.balance()).isEqualTo(10 - 3);
     }
 
     @Test
     public void creditAndBetTriceThenReportsDifferenceOfAmountsInBalance() {
-        Wallet wallet = new Wallet();
-        wallet.credit(10)
-              .bet(3)
+        Wallet wallet = new Wallet().credit(10);
+        wallet.bet(3)
               .bet(2)
               .bet(1);
         assertThat(wallet.balance()).isNotZero();
@@ -62,9 +60,8 @@ public class WalletBettingTest {
 
     @Test
     public void creditAndBetToEmptyThenReportsEmptyBalance() {
-        Wallet wallet = new Wallet();
-        wallet.credit(6)
-              .bet(3)
+        Wallet wallet = new Wallet().credit(6);
+        wallet.bet(3)
               .bet(2)
               .bet(1);
         assertThat(wallet.isEmpty()).isTrue();
