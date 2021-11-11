@@ -27,6 +27,13 @@ public class WalletBettingTest {
     }
 
     @Test
+    public void creditAndCanBetTooMuchReportsFalse() {
+        Wallet wallet = new Wallet().credit(3);
+        assertThat(wallet.canBet(4)).isFalse();
+        assertThat(wallet.balance()).isEqualTo(3);
+    }
+
+    @Test
     public void creditAndBetTooMuchThrowsException() {
         Wallet wallet = new Wallet().credit(3);
         assertThatThrownBy(() -> wallet.bet(4))
@@ -34,10 +41,24 @@ public class WalletBettingTest {
     }
 
     @Test
+    public void debitAndCanBetReportsFalse() {
+        Wallet wallet = new Wallet().debit(1);
+        assertThat(wallet.canBet(1)).isFalse();
+        assertThat(wallet.balance()).isEqualTo(-1);
+    }
+
+    @Test
     public void debitAndBetThrowsException() {
         Wallet wallet = new Wallet().debit(1);
         assertThatThrownBy(() -> wallet.bet(1))
                 .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    public void creditAndCanBetPositiveReportsTrue() {
+        Wallet wallet = new Wallet().credit(10);
+        assertThat(wallet.canBet(3)).isTrue();
+        assertThat(wallet.balance()).isEqualTo(10);
     }
 
     @Test

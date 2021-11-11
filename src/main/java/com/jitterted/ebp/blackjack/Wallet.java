@@ -27,6 +27,15 @@ public class Wallet {
         return this;
     }
 
+    public boolean canBet(int amount) {
+        try {
+            requireBalanceCovering(amount);
+        } catch (IllegalStateException ex) {
+            return false;
+        }
+        return true;
+    }
+
     public Wallet bet(int amount) {
         requireBalanceCovering(amount);
         return debit(amount);
