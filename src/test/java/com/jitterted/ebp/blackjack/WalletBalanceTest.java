@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class WalletTest {
+public class WalletBalanceTest {
     @Test
     public void newIsEmpty() {
         Wallet wallet = new Wallet();
