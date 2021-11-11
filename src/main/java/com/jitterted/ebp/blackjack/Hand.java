@@ -65,16 +65,20 @@ public class Hand {
         return handValue;
     }
 
-    public boolean containsAnAce() {
+    private boolean containsAnAce() {
         // does the hand contain at least 1 Ace?
         return cards
                 .stream()
                 .anyMatch(Card::isRankAce);
     }
 
-    private boolean aceCanTakeHigherValue(int handValue) {
-        return (handValue < Deck.ACE.rankAlternateValue()) ||
-                cards.size() == 2 && cards.stream().anyMatch(c -> c.rankValue() == 10);
+    private boolean aceCanTakeHigherValue(int baseValue) {
+        return aceAlternateValueGreaterThanOrEqualTo(baseValue) ||
+                blackjack();
+    }
+
+    private boolean aceAlternateValueGreaterThanOrEqualTo(int baseValue) {
+        return baseValue <= Deck.ACE.rankAlternateValue();
     }
 
     public Card firstCard() {
@@ -95,5 +99,13 @@ public class Hand {
                                   .map(Card::display)
                                   .collect(Collectors.joining(
                                        ansi().cursorUp(6).cursorRight(1).toString())));
+    }
+
+    public String toString() {
+        return "Hand {" +
+                "owner=" + owner +
+                ", cards=" + cards +
+                ", totalValue=" + totalValue +
+                "}";
     }
 }
