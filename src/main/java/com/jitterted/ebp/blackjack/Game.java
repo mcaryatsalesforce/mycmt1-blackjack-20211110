@@ -71,7 +71,7 @@ public class Game {
 
     private static boolean promptUserToContinue() {
         while (true) {
-            String playerChoice = inputFromPlayer("Would you like ot play again? [YN]").toLowerCase();
+            String playerChoice = inputFromPlayer("Would you like to play again? [YN]").toLowerCase();
             if (playerContinues(playerChoice)) {
                 return true;
             }
@@ -112,6 +112,8 @@ public class Game {
         // get Player's decision: hit until they stand, then they're done (or they go bust)
         if (!dealerHand.blackjack()) {
             playerDraws();
+        }
+        if (!playerHand.blackjack() && !playerHand.busted()) {
             dealerDraws();
         }
         displayFinalGameState();
@@ -120,10 +122,8 @@ public class Game {
 
     private void dealerDraws() {
         // Dealer makes its choice automatically based on a simple heuristic (<=16, hit, 17>=stand)
-        if (!playerHand.busted()) {
-            while (dealerMustDraw()) {
-                dealToHand(dealerHand);
-            }
+        while (dealerMustDraw()) {
+            dealToHand(dealerHand);
         }
     }
 
