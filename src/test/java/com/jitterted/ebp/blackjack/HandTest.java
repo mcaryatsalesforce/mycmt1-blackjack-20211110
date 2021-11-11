@@ -88,4 +88,24 @@ public class HandTest {
         assertThat(hand.busted())
                 .isFalse();
     }
+
+    @Test
+    public void acesOverKings() {
+        Hand ace = new Hand("ace").take(new Card(CardSuit.Spade, CardValue.Ace));
+        Hand king = new Hand("king").take(new Card(CardSuit.Heart, CardValue.King));
+        assertThat(ace.beats(king))
+                .isTrue();
+        assertThat(king.beats(ace))
+                .isFalse();
+    }
+
+    @Test
+    public void faceCardsPush() {
+        Hand queen = new Hand("queen").take(new Card(CardSuit.Spade, CardValue.Queen));
+        Hand king = new Hand("king").take(new Card(CardSuit.Heart, CardValue.King));
+        assertThat(queen.beats(king))
+                .isFalse();
+        assertThat(king.beats(queen))
+                .isFalse();
+    }
 }

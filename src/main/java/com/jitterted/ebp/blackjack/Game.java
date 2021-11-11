@@ -44,7 +44,7 @@ public class Game {
                 game.play();
                 if (!promptUserToContinue()) {
                     return;
-                };
+                }
             }
         } catch (EmptyDeckException ex) {
             System.out.printf("Game over - %s.%n", ex.getMessage());
@@ -230,12 +230,12 @@ public class Game {
         if (dealerHand.blackjack()) {
             System.out.println("Dealer hit Blackjack!");
         }
-        if (dealerHand.totalValue() < playerHand.totalValue()) {
+        if (playerHand.beats(dealerHand)) {
             System.out.println("You beat the Dealer! 💵");
-        } else if (dealerHand.totalValue() == playerHand.totalValue()) {
-            System.out.println("Push: You tie with the Dealer. 💸");
-        } else {
+        } else if (dealerHand.beats(playerHand)) {
             System.out.println("You lost to the Dealer. 💸");
+        } else {
+            System.out.println("Push: You tie with the Dealer. 💸");
         }
     }
 }
