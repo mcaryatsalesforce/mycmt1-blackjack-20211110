@@ -95,7 +95,7 @@ public class HandTest {
         Hand king = new Hand("king").take(new Card(CardSuit.Heart, CardValue.King));
         assertThat(ace.beats(king))
                 .isTrue();
-        assertThat(king.beats(ace))
+        assertThat(ace.pushes(king))
                 .isFalse();
     }
 
@@ -103,6 +103,10 @@ public class HandTest {
     public void faceCardsPush() {
         Hand queen = new Hand("queen").take(new Card(CardSuit.Spade, CardValue.Queen));
         Hand king = new Hand("king").take(new Card(CardSuit.Heart, CardValue.King));
+        assertThat(queen.pushes(king))
+                .isTrue();
+        assertThat(king.pushes(queen))
+                .isTrue();
         assertThat(queen.beats(king))
                 .isFalse();
         assertThat(king.beats(queen))

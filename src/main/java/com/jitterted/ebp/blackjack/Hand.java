@@ -36,6 +36,10 @@ public class Hand {
         return this.totalValue() > that.totalValue();
     }
 
+    public boolean pushes(Hand that) {
+        return this.totalValue() == that.totalValue();
+    }
+
     public boolean blackjack() {
         return cards.size() == 2 &&
                 cards.stream().anyMatch(Card::isRankAce) &&

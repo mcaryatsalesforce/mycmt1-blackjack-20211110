@@ -232,10 +232,10 @@ public class Game {
         }
         if (playerHand.beats(dealerHand)) {
             System.out.println("You beat the Dealer! 💵");
-        } else if (dealerHand.beats(playerHand)) {
-            System.out.println("You lost to the Dealer. 💸");
-        } else {
+        } else if (playerHand.pushes(dealerHand)) {
             System.out.println("Push: You tie with the Dealer. 💸");
+        } else {
+            System.out.println("You lost to the Dealer. 💸");
         }
     }
 }
