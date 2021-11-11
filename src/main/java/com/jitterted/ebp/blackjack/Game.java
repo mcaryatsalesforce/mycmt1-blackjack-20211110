@@ -148,38 +148,6 @@ public class Game {
         return playerChoice.startsWith("h");
     }
 
-    public int handValueOf(List<Card> hand) {
-        int handValue = handBaseValueOf(hand);
-        handValue = handAddAceAlternateValue(hand, handValue);
-        return handValue;
-    }
-
-    private int handAddAceAlternateValue(List<Card> hand, int handValue) {
-        // if the total hand value <= Ace's alternate value, then change the Ace's value to the alternate
-        if (handContainsAnAce(hand) && aceCanTakeHigherValue(handValue)) {
-            handValue += (Deck.ACE.rankAlternateValue() - Deck.ACE.rankValue());
-        }
-        return handValue;
-    }
-
-    private int handBaseValueOf(List<Card> hand) {
-        return hand
-                .stream()
-                .mapToInt(Card::rankValue)
-                .sum();
-    }
-
-    private boolean handContainsAnAce(List<Card> hand) {
-        // does the hand contain at least 1 Ace?
-        return hand
-                .stream()
-                .anyMatch(Card::isRankAce);
-    }
-
-    private boolean aceCanTakeHigherValue(int handValue) {
-        return handValue < Deck.ACE.rankAlternateValue();
-    }
-
     private String inputFromPlayer() {
         System.out.println("[H]it or [S]tand?");
         Scanner scanner = new Scanner(System.in);
