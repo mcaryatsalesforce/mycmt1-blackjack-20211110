@@ -11,7 +11,7 @@ public class HandTest {
 
     @Test
     public void handWithOneAceTwoCardsIsValuedAt11() throws Exception {
-        Hand hand = new Hand();
+        Hand hand = new Hand("someones");
         List<Card> cards = List.of(new Card(CardSuit.Spade, CardValue.Ace),
                                    new Card(CardSuit.Spade, CardValue.Five));
         cards.forEach(hand::take);
@@ -26,7 +26,7 @@ public class HandTest {
 
     @Test
     public void handWithOneAceAndOtherCardsEqualTo11IsValuedAt1() throws Exception {
-        Hand hand = new Hand();
+        Hand hand = new Hand("someones");
         List<Card> cards = List.of(new Card(CardSuit.Spade, CardValue.Ace),
                                    new Card(CardSuit.Spade, CardValue.Eight),
                                    new Card(CardSuit.Spade, CardValue.Three));
@@ -42,7 +42,7 @@ public class HandTest {
 
     @Test
     public void handOver21IsBusted() throws Exception {
-        Hand hand = new Hand();
+        Hand hand = new Hand("someones");
         List<Card> cards = List.of(new Card(CardSuit.Spade, CardValue.Ace),
                                    new Card(CardSuit.Spade, CardValue.Eight),
                                    new Card(CardSuit.Spade, CardValue.Three),
@@ -60,7 +60,7 @@ public class HandTest {
     @Test
     public void handWithOneAceAndFaceCardIsBlackjack() throws Exception {
         for (CardValue faceCardValue: Arrays.stream(CardValue.values()).filter(CardValue::isCourtCard).toArray(CardValue[]::new)) {
-            Hand hand = new Hand();
+            Hand hand = new Hand(faceCardValue.name());
             List<Card> cards = List.of(new Card(CardSuit.Spade, CardValue.Ace),
                                        new Card(CardSuit.Spade, faceCardValue));
             cards.forEach(hand::take);
@@ -76,7 +76,7 @@ public class HandTest {
 
     @Test
     public void handWithOneAceAndTenIsBlackjack() throws Exception {
-        Hand hand = new Hand();
+        Hand hand = new Hand("someones");
         List<Card> cards = List.of(new Card(CardSuit.Spade, CardValue.Ace),
                                    new Card(CardSuit.Spade, CardValue.Ten));
         cards.forEach(hand::take);

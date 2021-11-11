@@ -3,12 +3,17 @@ package com.jitterted.ebp.blackjack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.fusesource.jansi.Ansi.ansi;
 
 public class Hand {
+    private final String owner;
     private final List<Card> cards;
     private int totalValue;
 
-    public Hand() {
+    public Hand(String owner) {
+        this.owner = owner;
         cards = new ArrayList<>();
         totalValue = 0;
     }
@@ -69,5 +74,18 @@ public class Hand {
             throw new IllegalStateException("hand is empty");
         }
         return cards.get(0);
+    }
+
+    public void display() {
+        System.out.printf("%s has: %n", this.owner);
+        displayCards();
+        System.out.println(" (" + totalValue() + ")");
+    }
+
+    public void displayCards() {
+        System.out.println(cards().stream()
+                                  .map(Card::display)
+                                  .collect(Collectors.joining(
+                                       ansi().cursorUp(6).cursorRight(1).toString())));
     }
 }

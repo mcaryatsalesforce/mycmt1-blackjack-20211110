@@ -12,8 +12,8 @@ public class Game {
 
     private final Deck deck;
 
-    private final Hand dealerHand = new Hand();
-    private final Hand playerHand = new Hand();
+    private final Hand dealerHand = new Hand("Dealer");
+    private final Hand playerHand = new Hand("Player");
 
     public static void main(String[] args) {
         ensureConsoleAttached();
@@ -101,9 +101,7 @@ public class Game {
 
     private void dealRoundToHands() {
         // deal players first
-        for (final Hand hand: List.of(playerHand, dealerHand)) {
-            dealToHand(hand);
-        }
+        List.of(playerHand, dealerHand).forEach(this::dealToHand);
     }
 
     private void dealToHand(Hand hand) {
@@ -193,7 +191,7 @@ public class Game {
         displayBackOfCard();
 
         System.out.println();
-        displayHand("Player", playerHand);
+        playerHand.display();
     }
 
     private void displayBackOfCard() {
@@ -210,25 +208,12 @@ public class Game {
                         .a("└─────────┘"));
     }
 
-    private void displayCards(Hand hand) {
-        System.out.println(hand.cards().stream()
-                               .map(Card::display)
-                               .collect(Collectors.joining(
-                                       ansi().cursorUp(6).cursorRight(1).toString())));
-    }
-
     private void displayFinalGameState() {
         System.out.print(ansi().eraseScreen().cursor(1, 1));
-        displayHand("Dealer ", dealerHand);
+        dealerHand.display();
 
         System.out.println();
-        displayHand("Player", playerHand);
-    }
-
-    private void displayHand(String owner, Hand hand) {
-        System.out.printf("%s has: %n", owner);
-        displayCards(hand);
-        System.out.println(" (" + hand.totalValue() + ")");
+        playerHand.display();
     }
 
     private void displayGameResult() {
