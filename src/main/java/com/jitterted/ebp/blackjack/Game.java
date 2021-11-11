@@ -5,7 +5,6 @@ import org.fusesource.jansi.AnsiConsole;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
@@ -37,9 +36,19 @@ public class Game {
     }
 
     private static void playGame() {
-        Game game = new Game();
-        game.initialDeal();
-        game.play();
+        try {
+            Deck deck = new Deck();
+            while (true) {
+                Game game = new Game(deck);
+                game.initialDeal();
+                game.play();
+                if (!promptUserToContinue()) {
+                    return;
+                };
+            }
+        } catch (EmptyDeckException ex) {
+            System.out.printf("Game over - %s.%n", ex.getMessage());
+        }
     }
 
     private static void greetUser() {
@@ -60,12 +69,28 @@ public class Game {
         System.console().readLine();
     }
 
+    private static boolean promptUserToContinue() {
+        while (true) {
+            String playerChoice = inputFromPlayer("Would you like ot play again? [YN]").toLowerCase();
+            if (playerContinues(playerChoice)) {
+                return true;
+            }
+            if (playerFinished(playerChoice)) {
+                return false;
+            }
+        }
+    }
+
     private static void resetDisplay() {
         System.out.println(ansi().reset());
     }
 
-    public Game() {
-        deck = new Deck();
+    public Game(Deck deck) {
+        this.deck = deck;
+    }
+
+    Game() {
+        this(new Deck());
     }
 
     public void initialDeal() {
@@ -119,7 +144,7 @@ public class Game {
     }
 
     private boolean playDeal() {
-        String playerChoice = inputFromPlayer().toLowerCase();
+        String playerChoice = inputFromPlayer("[H]it or [S]tand?").toLowerCase();
         if (playerStands(playerChoice)) {
             return true;
         }
@@ -133,20 +158,28 @@ public class Game {
         return false;
     }
 
-    private void remindUserOfCommands() {
+    private static void remindUserOfCommands() {
         System.out.println("You need to [H]it or [S]tand");
     }
 
-    private boolean playerStands(String playerChoice) {
-        return playerChoice.startsWith("s");
+    private static boolean playerContinues(String playerChoice) {
+        return playerChoice.startsWith("y");
     }
 
-    private boolean playerHits(String playerChoice) {
+    private static boolean playerFinished(String playerChoice) {
+        return playerChoice.startsWith("n");
+    }
+
+    private static boolean playerHits(String playerChoice) {
         return playerChoice.startsWith("h");
     }
 
-    private String inputFromPlayer() {
-        System.out.println("[H]it or [S]tand?");
+    private static boolean playerStands(String playerChoice) {
+        return playerChoice.startsWith("s");
+    }
+
+    private static String inputFromPlayer(String prompt) {
+        System.out.print(ansi().fgBrightBlack().a(prompt).a("  "));
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }

@@ -23,6 +23,10 @@ public class Deck {
     }
 
     public Card draw() {
-        return cards.remove(0);
+        try {
+            return cards.remove(0);
+        } catch (IndexOutOfBoundsException ex) {
+            throw new EmptyDeckException();
+        }
     }
 }

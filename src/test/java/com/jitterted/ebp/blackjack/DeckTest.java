@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DeckTest {
 
@@ -53,4 +54,13 @@ class DeckTest {
                 .hasSize(52);
     }
 
+    @Test
+    public void drawMoreThanAllCardsThrows() throws Exception {
+        Deck deck = new Deck();
+        for (int i = 1; i <= 52; i++) {
+            deck.draw();
+        }
+
+        assertThrows(EmptyDeckException.class, () -> deck.draw());
+    }
 }
