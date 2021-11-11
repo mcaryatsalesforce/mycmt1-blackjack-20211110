@@ -87,17 +87,15 @@ public class Game {
 
     public void play() { // long method (many many _many_ decisions)
         // get Player's decision: hit until they stand, then they're done (or they go bust)
-        boolean playerBusted = playDeals();
-
-        dealerDraws(playerBusted);
-
+        playerDraws();
+        dealerDraws();
         displayFinalGameState();
-        displayGameResult(playerBusted);
+        displayGameResult();
     }
 
-    private void dealerDraws(boolean playerBusted) {
+    private void dealerDraws() {
         // Dealer makes its choice automatically based on a simple heuristic (<=16, hit, 17>=stand)
-        if (!playerBusted) {
+        if (!playerHand.busted()) {
             while (dealerMustDraw()) {
                 dealToHand(dealerHand);
             }
@@ -108,24 +106,25 @@ public class Game {
         return dealerHand.totalValue() <= 16;
     }
 
-    private boolean playDeals() {
-        boolean playerBusted = false;
-        while (!playerBusted) {
+    private void playerDraws() {
+        while (true) {
             displayGameState();
-            playerBusted = playDeal();
+            boolean playerStands = playDeal();
+            if (playerStands || playerHand.busted()) {
+                return;
+            }
         }
-        return playerBusted;
     }
 
     private boolean playDeal() {
         String playerChoice = inputFromPlayer().toLowerCase();
         if (playerStands(playerChoice)) {
-            return false;
+            return true;
         }
         if (playerHits(playerChoice)) {
             dealToHand(playerHand);
-            if (playerBusted(playerHand)) {
-                return true;
+            if (playerHand.busted()) {
+                return false;
             }
         }
         remindUserOfCommands();
@@ -134,10 +133,6 @@ public class Game {
 
     private void remindUserOfCommands() {
         System.out.println("You need to [H]it or [S]tand");
-    }
-
-    private boolean playerBusted(Hand hand) {
-        return hand.totalValue() > 21;
     }
 
     private boolean playerStands(String playerChoice) {
@@ -196,15 +191,15 @@ public class Game {
     }
 
     private void displayHand(String owner, Hand hand) {
-        System.out.println(String.format("%s has: ", owner));
+        System.out.printf("%s has: %n", owner);
         displayCards(hand);
         System.out.println(" (" + hand.totalValue() + ")");
     }
 
-    private void displayGameResult(boolean playerBusted) {
-        if (playerBusted) {
+    private void displayGameResult() {
+        if (playerHand.busted()) {
             System.out.println("You Busted, so you lose.  💸");
-        } else if (playerBusted(dealerHand)) {
+        } else if (dealerHand.busted()) {
             System.out.println("Dealer went BUST, Player wins! Yay for you!! 💵");
         } else if (dealerHand.totalValue() < playerHand.totalValue()) {
             System.out.println("You beat the Dealer! 💵");
