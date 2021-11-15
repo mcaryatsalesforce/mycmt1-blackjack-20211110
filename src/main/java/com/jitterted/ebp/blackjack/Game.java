@@ -14,13 +14,15 @@ public class Game {
 
     private final Hand dealerHand = new Hand("Dealer");
     private final Hand playerHand = new Hand("Player");
+    private int playerBalance;
+    private int playerBet;
 
     public static void main(String[] args) {
         ensureConsoleAttached();
         initDisplay();
         greetUser();
-        promptUserToStart();
-        playGame();
+        int initialBalance = promptUserForBalance();
+        playGame(initialBalance);
 
         resetDisplay();
     }
@@ -35,13 +37,15 @@ public class Game {
         AnsiConsole.systemInstall();
     }
 
-    private static void playGame() {
+    private static void playGame(int balance) {
         try {
             Deck deck = new Deck();
             while (true) {
-                Game game = new Game(deck);
+                Game game = new Game(deck, balance);
+                game.playerBets(promptUserForBet());
                 game.initialDeal();
                 game.play();
+                balance = game.playerBalance();
                 if (!promptUserToContinue()) {
                     return;
                 }
@@ -61,12 +65,44 @@ public class Game {
                                    .fgBlack().a(" BlackJack game"));
     }
 
-    private static void promptUserToStart() {
-        System.out.println(ansi()
-                                   .cursor(3, 1)
-                                   .fgBrightBlack().a("Hit [ENTER] to start..."));
+    private static int promptUserForBalance() {
+        int initialBalance = 0;
+        while (initialBalance <= 0) {
+            System.out.print(ansi().cursor(3, 1));
+            String value = inputFromPlayer("Please enter the total which you are willing to gamble:  ");
+            try {
+                initialBalance = Integer.parseInt(value.strip());
+            } catch (NumberFormatException ex) {
+                System.out.println(ansi()
+                                           .fg(Ansi.Color.BLACK)
+                                           .a("\n\n")
+                                           .a(ex.getMessage()).a("; please enter a valid whole number."));
+            }
+        }
+        return initialBalance;
+    }
 
-        System.console().readLine();
+    private static int promptUserForBet() {
+        int bet = 0;
+        while (bet <= 0) {
+            String value = inputFromPlayer("Please enter how much you want to bet [$2-$500]:  ");
+            try {
+                bet = Integer.parseInt(value.strip());
+                if (bet < 2 || bet > 500) {
+                    System.out.println(ansi()
+                                               .fg(Ansi.Color.BLACK)
+                                               .a("\n\n")
+                                               .a("Please bet no less than $2 and no more than $500."));
+                    bet = 0;
+                }
+            } catch (NumberFormatException ex) {
+                System.out.println(ansi()
+                                           .fg(Ansi.Color.BLACK)
+                                           .a("\n\n")
+                                           .a(ex.getMessage()).a("; please enter a valid whole number."));
+            }
+        }
+        return bet;
     }
 
     private static boolean promptUserToContinue() {
@@ -85,12 +121,14 @@ public class Game {
         System.out.println(ansi().reset());
     }
 
-    public Game(Deck deck) {
+    public Game(Deck deck, int initialBalance) {
         this.deck = deck;
+        this.playerBalance = initialBalance;
+        this.playerBet = 0;
     }
 
     Game() {
-        this(new Deck());
+        this(new Deck(), 0);
     }
 
     public void initialDeal() {
@@ -177,7 +215,7 @@ public class Game {
     }
 
     private static String inputFromPlayer(String prompt) {
-        System.out.print(ansi().fgBrightBlack().a(prompt).a("  "));
+        System.out.print(ansi().eraseLine().fgBrightBlack().a(prompt).a("  "));
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
@@ -190,8 +228,9 @@ public class Game {
         // second card is the hole card, which is hidden
         displayBackOfCard();
 
-        System.out.println();
+        System.out.printf("%n%n%n");
         playerHand.display();
+        System.out.printf("%n%n%nWallet: $%6d  Current Bet: $%6d%n", playerBalance(), playerBet());
     }
 
     private void displayBackOfCard() {
@@ -218,24 +257,69 @@ public class Game {
 
     private void displayGameResult() {
         if (playerHand.busted()) {
-            System.out.println("You Busted, so you lose.  💸");
-            return;
+            System.out.println("\nYou Busted, so you lose.  💸");
+            playerLosesBet();
         } else if (dealerHand.busted()) {
-            System.out.println("Dealer went BUST, Player wins! Yay for you!! 💵");
-            return;
-        }
-        if (playerHand.blackjack()) {
-            System.out.println("You hit Blackjack!");
-        }
-        if (dealerHand.blackjack()) {
-            System.out.println("Dealer hit Blackjack!");
-        }
-        if (playerHand.beats(dealerHand)) {
-            System.out.println("You beat the Dealer! 💵");
-        } else if (playerHand.pushes(dealerHand)) {
-            System.out.println("Push: You tie with the Dealer. 💸");
+            System.out.println("\nDealer went BUST, Player wins! Yay for you!! 💵");
+            playerWinsBet();
         } else {
-            System.out.println("You lost to the Dealer. 💸");
+            if (playerHand.blackjack()) {
+                System.out.println("You hit Blackjack!");
+                playerWinsBlackjack();
+            }
+            if (dealerHand.blackjack()) {
+                System.out.println("Dealer hit Blackjack!");
+                playerLosesBet();
+            }
+            if (playerHand.beats(dealerHand)) {
+                System.out.println("You beat the Dealer! 💵");
+                playerWinsBet();
+            } else if (playerHand.pushes(dealerHand)) {
+                System.out.println("Push: You tie with the Dealer. 💸");
+                playerPushesBet();
+            } else {
+                System.out.println("You lost to the Dealer. 💸");
+                playerLosesBet();
+            }
         }
+        System.out.printf("Wallet: $%6d%n", playerBalance());
+    }
+
+    public int playerBalance() {
+        return playerBalance;
+    }
+
+    public int playerBet() {
+        return playerBet;
+    }
+
+    public void playerDeposits(int amount) {
+        playerBalance += amount;
+    }
+
+    public void playerBets(int amount) {
+        playerBalance -= amount;
+        playerBet += amount;
+    }
+
+    public void playerWinsBet() {
+        payoffPlayer(2);
+    }
+
+    public void playerWinsBlackjack() {
+        payoffPlayer(2.5);
+    }
+
+    public void playerLosesBet() {
+        payoffPlayer(0);
+    }
+
+    public void playerPushesBet() {
+        payoffPlayer(1);
+    }
+
+    private void payoffPlayer(double payoff) {
+        playerBalance += playerBet * payoff;
+        playerBet = 0;
     }
 }
