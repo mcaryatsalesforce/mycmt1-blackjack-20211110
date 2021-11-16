@@ -1,5 +1,7 @@
 package com.jitterted.ebp.blackjack;
 
+import org.fusesource.jansi.Ansi;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -89,9 +91,11 @@ public class Hand {
     }
 
     public void display() {
-        System.out.printf("%s has: %n", this.owner);
+        System.out.print(ansi().boldOff().fg(Ansi.Color.BLACK)
+                                 .format("%s has: %n", this.owner));
         displayCards();
-        System.out.println(" (" + totalValue() + ")");
+        System.out.print(ansi().boldOff().fg(Ansi.Color.BLACK)
+                                       .format("(%d)%n", totalValue()));
     }
 
     public void displayCards() {

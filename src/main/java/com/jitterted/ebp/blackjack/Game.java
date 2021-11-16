@@ -221,8 +221,9 @@ public class Game {
     }
 
     private void displayGameState() {
-        System.out.print(ansi().eraseScreen().cursor(1, 1));
-        System.out.println("Dealer has: ");
+        System.out.println(ansi().eraseScreen()
+                                 .cursor(1, 1)
+                                 .a("Dealer has: "));
         System.out.println(dealerHand.firstCard().display()); // first card is Face Up
 
         // second card is the hole card, which is hidden
@@ -230,7 +231,10 @@ public class Game {
 
         System.out.printf("%n%n%n");
         playerHand.display();
-        System.out.printf("%n%n%nWallet: $%6d  Current Bet: $%6d%n", playerBalance(), playerBet());
+        System.out.print(ansi()
+                                   .boldOff()
+                                   .fg(Ansi.Color.BLACK)
+                                   .format("%n%n%nWallet: $%6d  Current Bet: $%6d%n", playerBalance(), playerBet()));
     }
 
     private void displayBackOfCard() {
@@ -256,6 +260,7 @@ public class Game {
     }
 
     private void displayGameResult() {
+        System.out.print(ansi().boldOff().fg(Ansi.Color.BLACK));
         if (playerHand.busted()) {
             System.out.println("\nYou Busted, so you lose.  💸");
             playerLosesBet();
@@ -264,21 +269,21 @@ public class Game {
             playerWinsBet();
         } else {
             if (playerHand.blackjack()) {
-                System.out.println("You hit Blackjack!");
+                System.out.print("You hit Blackjack!");
                 playerWinsBlackjack();
             }
             if (dealerHand.blackjack()) {
-                System.out.println("Dealer hit Blackjack!");
+                System.out.print("Dealer hit Blackjack!");
                 playerLosesBet();
             }
             if (playerHand.beats(dealerHand)) {
-                System.out.println("You beat the Dealer! 💵");
+                System.out.println("\nYou beat the Dealer! 💵");
                 playerWinsBet();
             } else if (playerHand.pushes(dealerHand)) {
-                System.out.println("Push: You tie with the Dealer. 💸");
+                System.out.println("\nPush: You tie with the Dealer. 💸");
                 playerPushesBet();
             } else {
-                System.out.println("You lost to the Dealer. 💸");
+                System.out.println("\nYou lost to the Dealer. 💸");
                 playerLosesBet();
             }
         }
