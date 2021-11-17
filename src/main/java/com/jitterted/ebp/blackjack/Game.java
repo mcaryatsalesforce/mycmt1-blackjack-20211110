@@ -6,6 +6,10 @@ import org.fusesource.jansi.AnsiConsole;
 import java.util.List;
 import java.util.Scanner;
 
+import static com.jitterted.ebp.blackjack.GameOutcome.Blackjack;
+import static com.jitterted.ebp.blackjack.GameOutcome.Lose;
+import static com.jitterted.ebp.blackjack.GameOutcome.Push;
+import static com.jitterted.ebp.blackjack.GameOutcome.Win;
 import static org.fusesource.jansi.Ansi.ansi;
 
 public class Game {
@@ -155,7 +159,9 @@ public class Game {
             dealerDraws();
         }
         displayFinalGameState();
-        displayGameResult();
+        GameOutcome gameOutcome = displayGameResult();
+        payoffPlayer(gameOutcome);
+        displayWallet();
     }
 
     private void dealerDraws() {
@@ -259,34 +265,45 @@ public class Game {
         playerHand.display();
     }
 
-    private void displayGameResult() {
+    private GameOutcome displayGameResult() {
+        GameOutcome gameOutcome = null;
         System.out.print(ansi().boldOff().fg(Ansi.Color.BLACK));
         if (playerHand.busted()) {
             System.out.println("\nYou Busted, so you lose.  💸");
-            playerLosesBet();
+            gameOutcome = Lose;
         } else if (dealerHand.busted()) {
             System.out.println("\nDealer went BUST, Player wins! Yay for you!! 💵");
-            playerWinsBet();
+            gameOutcome = Win;
         } else {
             if (playerHand.blackjack()) {
                 System.out.print("You hit Blackjack!");
-                playerWinsBlackjack();
+                gameOutcome = Blackjack;
             }
             if (dealerHand.blackjack()) {
                 System.out.print("Dealer hit Blackjack!");
-                playerLosesBet();
+                gameOutcome = Lose;
             }
             if (playerHand.beats(dealerHand)) {
                 System.out.println("\nYou beat the Dealer! 💵");
-                playerWinsBet();
+                if (gameOutcome == null) {
+                    gameOutcome = Win;
+                }
             } else if (playerHand.pushes(dealerHand)) {
                 System.out.println("\nPush: You tie with the Dealer. 💸");
-                playerPushesBet();
+                if (gameOutcome == null) {
+                    gameOutcome = Push;
+                }
             } else {
                 System.out.println("\nYou lost to the Dealer. 💸");
-                playerLosesBet();
+                if (gameOutcome == null) {
+                    gameOutcome = Lose;
+                }
             }
         }
+        return gameOutcome;
+    }
+
+    private void displayWallet() {
         System.out.printf("Wallet: $%6d%n", playerBalance());
     }
 
@@ -307,24 +324,8 @@ public class Game {
         playerBet += amount;
     }
 
-    public void playerWinsBet() {
-        payoffPlayer(2);
-    }
-
-    public void playerWinsBlackjack() {
-        payoffPlayer(2.5);
-    }
-
-    public void playerLosesBet() {
-        payoffPlayer(0);
-    }
-
-    public void playerPushesBet() {
-        payoffPlayer(1);
-    }
-
-    private void payoffPlayer(double payoff) {
-        playerBalance += playerBet * payoff;
+    private void payoffPlayer(GameOutcome gameOutcome) {
+        playerBalance += gameOutcome.playerPayoff(playerBet);
         playerBet = 0;
     }
 }
