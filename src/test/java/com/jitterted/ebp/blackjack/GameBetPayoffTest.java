@@ -34,7 +34,7 @@ public class GameBetPayoffTest {
         Game game = new Game();
         game.playerDeposits(100);
         game.playerBets(50);
-        game.playerWinsBet();
+        game.payoffPlayer(GameOutcome.Win);
         assertThat(game.playerBalance())
                 .isEqualTo(100 - 50 + 2*50);
     }
@@ -44,7 +44,7 @@ public class GameBetPayoffTest {
         Game game = new Game();
         game.playerDeposits(100);
         game.playerBets(50);
-        game.playerWinsBlackjack();
+        game.payoffPlayer(GameOutcome.Blackjack);
         int blackjackWinnings = (int)(2.5 * 50);
         int expected = (100 - 50) + blackjackWinnings;
         assertThat(game.playerBalance())
@@ -56,9 +56,9 @@ public class GameBetPayoffTest {
         Game game = new Game();
         game.playerDeposits(100);
         game.playerBets(50);
-        game.playerWinsBlackjack();
+        game.payoffPlayer(GameOutcome.Blackjack);
         game.playerBets(50);
-        game.playerWinsBlackjack();
+        game.payoffPlayer(GameOutcome.Blackjack);
         int blackjackWinnings = (int)(2.5 * 50);
         int expected = 100 - 50 - 50 + blackjackWinnings + blackjackWinnings;
         assertThat(game.playerBalance())
@@ -70,7 +70,7 @@ public class GameBetPayoffTest {
         Game game = new Game();
         game.playerDeposits(100);
         game.playerBets(25);
-        game.playerLosesBet();
+        game.payoffPlayer(GameOutcome.Lose);
         assertThat(game.playerBalance())
                 .isEqualTo(100 - 25);
     }
@@ -80,9 +80,9 @@ public class GameBetPayoffTest {
         Game game = new Game();
         game.playerDeposits(100);
         game.playerBets(25);
-        game.playerLosesBet();
+        game.payoffPlayer(GameOutcome.Lose);
         game.playerBets(25);
-        game.playerLosesBet();
+        game.payoffPlayer(GameOutcome.Lose);
         assertThat(game.playerBalance())
                 .isEqualTo(100 - 25 - 25);
     }
@@ -92,7 +92,7 @@ public class GameBetPayoffTest {
         Game game = new Game();
         game.playerDeposits(100);
         game.playerBets(50);
-        game.playerPushesBet();
+        game.payoffPlayer(GameOutcome.Push);
         assertThat(game.playerBalance())
                 .isEqualTo(100 - 50 + 50);
     }
@@ -102,9 +102,9 @@ public class GameBetPayoffTest {
         Game game = new Game();
         game.playerDeposits(100);
         game.playerBets(50);
-        game.playerPushesBet();
+        game.payoffPlayer(GameOutcome.Push);
         game.playerBets(50);
-        game.playerPushesBet();
+        game.payoffPlayer(GameOutcome.Push);
         assertThat(game.playerBalance())
                 .isEqualTo(100 - 50 + 50 - 50 + 50);
     }

@@ -324,7 +324,7 @@ public class Game {
         playerBet += amount;
     }
 
-    private void payoffPlayer(GameOutcome gameOutcome) {
+    public void payoffPlayer(GameOutcome gameOutcome) {
         playerBalance += gameOutcome.playerPayoff(playerBet);
         playerBet = 0;
     }
