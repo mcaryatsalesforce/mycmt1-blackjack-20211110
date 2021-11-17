@@ -44,8 +44,8 @@ public class Hand {
 
     public boolean blackjack() {
         return cards.size() == 2 &&
-                cards.stream().anyMatch(Card::isRankAce) &&
-                cards.stream().anyMatch(c -> c.rankValue() == 10);
+                cards.stream().anyMatch(c -> c.rank().isAce()) &&
+                cards.stream().anyMatch(c -> c.rank().value() == 10);
     }
 
     public boolean busted() {
@@ -55,14 +55,15 @@ public class Hand {
     private int baseValue() {
         return cards
                 .stream()
-                .mapToInt(Card::rankValue)
+                .map(Card::rank)
+                .mapToInt(CardValue::value)
                 .sum();
     }
 
     private int addAceAlternateValue(int handValue) {
         // if the total hand value <= Ace's alternate value, then change the Ace's value to the alternate
         if (containsAnAce() && aceCanTakeHigherValue(handValue)) {
-            handValue += (Deck.ACE.rankAlternateValue() - Deck.ACE.rankValue());
+            handValue += (Deck.ACE.rank().alternateValue() - Deck.ACE.rank().value());
         }
         return handValue;
     }
@@ -71,7 +72,8 @@ public class Hand {
         // does the hand contain at least 1 Ace?
         return cards
                 .stream()
-                .anyMatch(Card::isRankAce);
+                .map(Card::rank)
+                .anyMatch(CardValue::isAce);
     }
 
     private boolean aceCanTakeHigherValue(int baseValue) {
@@ -80,7 +82,7 @@ public class Hand {
     }
 
     private boolean aceAlternateValueGreaterThanOrEqualTo(int baseValue) {
-        return baseValue <= Deck.ACE.rankAlternateValue();
+        return baseValue <= Deck.ACE.rank().alternateValue();
     }
 
     public Card firstCard() {

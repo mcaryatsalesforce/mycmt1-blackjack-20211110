@@ -13,29 +13,12 @@ public class Card {
         this.rank = rank;
     }
 
-    public int rankValue() {
-        if (rank.isCourtCard()) {
-            return 10;
-        } else if (rank.isAce()) {
-            return 1;
-        } else {
-            return Integer.parseInt(rank.symbol());
-        }
+    public CardValue rank() {
+        return rank;
     }
 
-    public int rankAlternateValue() {
-        if (rank.isAce()) {
-            return 11;
-        }
-        return rankValue();
-    }
-
-    public boolean isRankAce() {
-        return rank.isAce();
-    }
-
-    public boolean isRankCourt() {
-        return rank.isCourtCard();
+    public CardSuit suit() {
+        return suit;
     }
 
     public String display() { // long method (something about the handling of `lines` and its formatting strikes me as cantankerous)

@@ -37,7 +37,7 @@ class DeckTest {
         assertThat(card)
                 .isNotNull();
 
-        assertThat(card.rankValue())
+        assertThat(card.rank().value())
                 .isGreaterThan(0);
     }
 
@@ -61,6 +61,6 @@ class DeckTest {
             deck.draw();
         }
 
-        assertThrows(EmptyDeckException.class, () -> deck.draw());
+        assertThrows(EmptyDeckException.class, deck::draw);
     }
 }

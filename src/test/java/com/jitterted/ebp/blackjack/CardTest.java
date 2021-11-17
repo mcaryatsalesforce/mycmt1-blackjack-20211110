@@ -6,29 +6,20 @@ import static org.assertj.core.api.Assertions.*;
 import static org.fusesource.jansi.Ansi.ansi;
 
 class CardTest {
-
     @Test
-    public void withNumberCardHasNumericValueOfTheNumber() throws Exception {
+    public void rankReturned() throws Exception {
         Card card = new Card(CardSuit.Heart, CardValue.Seven);
 
-        assertThat(card.rankValue())
-                .isEqualTo(7);
+        assertThat(card.rank())
+                .isEqualTo(CardValue.Seven);
     }
 
     @Test
-    public void withValueOfQueenHasNumericValueOf10() throws Exception {
-        Card card = new Card(CardSuit.Heart, CardValue.Queen);
+    public void suitReturned() throws Exception {
+        Card card = new Card(CardSuit.Heart, CardValue.Seven);
 
-        assertThat(card.rankValue())
-                .isEqualTo(10);
-    }
-
-    @Test
-    public void withAceHasNumericValueOf1() throws Exception {
-        Card card = new Card(CardSuit.Heart, CardValue.Ace);
-
-        assertThat(card.rankValue())
-                .isEqualTo(1);
+        assertThat(card.suit())
+                .isEqualTo(CardSuit.Heart);
     }
 
     @Test
